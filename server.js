@@ -12,8 +12,24 @@ server.listen(3000, function () {
 
 io.on('connection', function (socket) {
     console.log('User connected. Socket id %s', socket.id);
+    var sender;
+
+    socket.on('start flow', function() {
+        sender = setInterval(function() {
+            socket.emit('new value', {
+                value: Math.round(Math.random()*1000)
+            });
+        }, 2000);
+        console.log('flow began on socket %s', socket.id);
+    });
+
+    socket.on('end flow', function() {
+        clearInterval(sender);
+        console.log('flow ended on socket %s', socket.id);
+    });
 
     socket.on('disconnect', function () {
+        clearInterval(sender);
         console.log('User disconnected. %s. Socket id %s', socket.id);
     });
 });

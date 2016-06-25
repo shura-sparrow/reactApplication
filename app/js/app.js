@@ -44,10 +44,32 @@ var TradeApp = React.createClass({
 
     getInitialState: function() {
         var stocks = {};
-        return {stocks: stocks};
+        var value = 'неизвестно';
+        socket.on('new value', data => {
+    		this.setState({
+    			value: data.value
+    		});
+		});
+        return {
+        	stocks: stocks,
+        	value: value
+        };
+    },
+    start: function() {
+        socket.emit('start flow');
+    },
+    stop: function() {
+        socket.emit('end flow');
     },
     render: function() {
-        return <TradeTable stocks={this.state.stocks}/>
+        return (
+        	<div>
+        		<TradeTable stocks={this.state.stocks}/>
+        		<button onClick={this.start}>start</button>
+        		<button onClick={this.stop}>stop</button>
+        		Значение: {this.state.value}
+			</div>
+		)
     }
 });
 
